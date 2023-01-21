@@ -7,9 +7,7 @@ version: 2.1
 commands:
   print_pipeline_id:
     steps:
-      - run:
-        command:
-          echo $CIRCLE_WORKFLOW_ID
+      - run: echo $CIRCLE_WORKFLOW_ID
 jobs:
   print_env:
     docker:
@@ -46,3 +44,4 @@ workflows:
       - print_output_file:
           requires:
             - save_hello_world_output
+      - print_env
