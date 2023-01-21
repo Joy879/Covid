@@ -48,3 +48,4 @@ workflows:
           requires:
             - print_hello
       - say-hello
+      - print_env
