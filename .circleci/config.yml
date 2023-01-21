@@ -14,28 +14,24 @@ jobs:
           name: "echo an env var that is part of covid project"
           command: |
             echo $my_env_var # this env var must be set within the project
-  print_hello:
+  save_hello_world_output:
     docker:
       - image: circleci/node:13.8.0
     steps:
-      - run: echo hello
-  print_world:
+      - run: echo "hello" > output.txt
+      - persist_to_workspace:
+          root: workspace
+          paths:
+            - echo-output
+  print_output_file:
     docker:
       - image: circleci/node:13.8.0
     steps:
-      - run: echo world
-  say-hello:
-    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
-    docker:
-      - image: cimg/base:stable
-    # Add steps to the job
-    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
-    steps:
-      - checkout
-      - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: /tmp/workspace
+      - run: cat output.txt
+  
     
 
 # Invoke jobs via workflows
@@ -43,9 +39,5 @@ jobs:
 workflows:
   say-hello-workflow:
     jobs:
-      - print_hello
-      - print_world:
-          requires:
-            - print_hello
-      - say-hello
-      - print_env
+      - save_hello_world_output
+      - print_output_file
